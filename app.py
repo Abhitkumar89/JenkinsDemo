@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 def error_response(message, status_code=400):
     """Create error response."""
-    return jsonify({'error': message}), status_code
+    return jsonify({'success': False, 'error': message}), status_code
 
 
 def success_response(data=None, message=None, status_code=200):
