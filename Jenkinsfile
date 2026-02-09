@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -10,34 +11,35 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh '''
-                  python3 -m venv venv
-                  . venv/bin/activate
-                  pip install --upgrade pip
-                  pip install -r requirements.txt
+                bat '''
+                python --version
+                python -m venv venv
+                venv\\Scripts\\activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
                 '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                  . venv/bin/activate
-                  pytest --junit-xml=test-results.xml
+                bat '''
+                venv\\Scripts\\activate
+                pytest
                 '''
             }
         }
     }
 
     post {
-        always {
-            echo 'Finished CI run'
-        }
         success {
-            echo 'Tests passed!'
+            echo 'Tests passed successfully'
         }
         failure {
-            echo 'Some tests failed 😕'
+            echo 'Some tests failed'
+        }
+        always {
+            echo 'Finished CI run'
         }
     }
 }
