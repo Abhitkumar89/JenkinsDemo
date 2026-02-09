@@ -9,14 +9,18 @@ pipeline {
             }
         }
 
-        stage('Setup Python') {
+        stage('Setup Python Environment') {
             steps {
                 bat '''
+                echo Checking Python version
                 python --version
+
+                echo Creating virtual environment
                 python -m venv venv
-                venv\\Scripts\\activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
+
+                echo Installing dependencies
+                venv\\Scripts\\python -m pip install --upgrade pip
+                venv\\Scripts\\python -m pip install -r requirements.txt
                 '''
             }
         }
@@ -24,8 +28,8 @@ pipeline {
         stage('Run Tests') {
             steps {
                 bat '''
-                venv\\Scripts\\activate
-                pytest
+                echo Running pytest
+                venv\\Scripts\\python -m pytest -v
                 '''
             }
         }
@@ -33,13 +37,13 @@ pipeline {
 
     post {
         success {
-            echo 'Tests passed successfully'
+            echo '✅ CI Pipeline succeeded: All tests passed'
         }
         failure {
-            echo 'Some tests failed'
+            echo '❌ CI Pipeline failed: Tests or setup error'
         }
         always {
-            echo 'Finished CI run'
+            echo '📌 CI run finished'
         }
     }
 }
